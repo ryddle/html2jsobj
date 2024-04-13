@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>html2jsobj</title>
+    <style>
+        .wrapper {
+            display: flex;
+            flex-flow: row wrap;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .wrapper>* {
+            padding: 10px;
+            flex: 1 100%;
+        }
+
+        .main {
+            align-content: center;
+        }
+
+        .aside-1 {
+            height: 650px;
+        }
+
+        .aside-2 {
+            height: 650px;
+        }
+
+        @media all and (min-width: 600px) {
+            .aside {
+                flex: 1 0 0;
+            }
+        }
+
+        @media all and (min-width: 800px) {
+            .main {
+                flex: 0 0px;
+            }
+
+            .aside-1 {
+                order: 1;
+            }
+
+            .main {
+                order: 2;
+            }
+
+            .aside-2 {
+                order: 3;
+            }
+
+            .footer {
+                order: 4;
+            }
+        }
+
+
+        h1 {
+            font-size: 24px;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        #textarea {
+            flex: 1;
+            margin-right: 10px;
+            width: 98%;
+            height: 617px;
+        }
+
+        #result {
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 600px;
+            overflow: scroll;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header class="header">
+            <h1>Convert html into JavaScript</h1>
+            <p>Transforms the HTML stored in this textarea into a JavaScript object</p>
+            <br>
+        </header>
+        <article class="main">
+            <button id="boton">>></button>
+        </article>
+        <aside class="aside aside-1"><span>HTML</span>
+            <textarea id="textarea" cols="3"
+                rows="10"><div class="IroColorPicker" id="" style="display: block;"><div class="IroWheel" style="width: 350px; height: 350px; position: relative; overflow: visible; display: block;"><div class="IroWheelHue" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; border-radius: 50%; box-sizing: border-box; transform: rotateZ(90deg); background: conic-gradient(red, magenta, blue, aqua, lime, yellow, red);"></div><div class="IroWheelSaturation" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; border-radius: 50%; box-sizing: border-box; background: radial-gradient(circle closest-side, rgb(255, 255, 255), transparent);"></div><div class="IroWheelBorder" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; border-radius: 50%; box-sizing: border-box; border: 4px solid rgb(255, 255, 255);"></div><svg class="IroHandle IroHandle--0 IroHandle--isActive" style="transform: translate(147.55px, 125.479px); will-change: transform; top: -12px; left: -12px; width: 24px; height: 24px; position: absolute; overflow: visible;"><circle cx="12" cy="12" r="12" fill="none" stroke-width="2" stroke="#000"></circle><circle cx="12" cy="12" r="10" fill="hsl(119, 100%, 81%)" stroke-width="2" stroke="#fff"></circle></svg></div><div class="IroSlider" style="position: relative; width: 350px; height: 44px; border-radius: 22px; background: conic-gradient(rgb(204, 204, 204) 25%, rgb(255, 255, 255) 0deg, rgb(255, 255, 255) 50%, rgb(204, 204, 204) 0deg, rgb(204, 204, 204) 75%, rgb(255, 255, 255) 0deg) 0% 0% / 8px 8px; overflow: visible; display: block; margin-top: 12px;"><div class="IroSliderGradient" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; border-radius: 22px; background: linear-gradient(to right, rgb(255, 0, 0) 0%, rgb(255, 255, 0) 16.666%, rgb(0, 255, 0) 33.333%, rgb(0, 255, 255) 50%, rgb(0, 0, 255) 66.666%, rgb(255, 0, 255) 83.333%, rgb(255, 0, 0) 100%); box-sizing: border-box; border: 4px solid rgb(255, 255, 255);"></div><svg class="IroHandle IroHandle--0 IroHandle--isActive" style="transform: translate(123.15px, 22px); will-change: transform; top: -12px; left: -12px; width: 24px; height: 24px; position: absolute; overflow: visible;"><circle cx="12" cy="12" r="12" fill="none" stroke-width="2" stroke="#000"></circle><circle cx="12" cy="12" r="10" fill="none" stroke-width="2" stroke="#fff"></circle></svg></div><div class="IroSlider" style="position: relative; width: 350px; height: 44px; border-radius: 22px; background: conic-gradient(rgb(204, 204, 204) 25%, rgb(255, 255, 255) 0deg, rgb(255, 255, 255) 50%, rgb(204, 204, 204) 0deg, rgb(204, 204, 204) 75%, rgb(255, 255, 255) 0deg) 0% 0% / 8px 8px; overflow: visible; display: block; margin-top: 12px;"><div class="IroSliderGradient" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; border-radius: 22px; background: linear-gradient(to right, rgb(0, 0, 0) 0%, rgb(160, 255, 158) 100%); box-sizing: border-box; border: 4px solid rgb(255, 255, 255);"></div><svg class="IroHandle IroHandle--0 IroHandle--isActive" style="transform: translate(328px, 22px); will-change: transform; top: -12px; left: -12px; width: 24px; height: 24px; position: absolute; overflow: visible;"><circle cx="12" cy="12" r="12" fill="none" stroke-width="2" stroke="#000"></circle><circle cx="12" cy="12" r="10" fill="none" stroke-width="2" stroke="#fff"></circle></svg></div><div class="IroSlider" style="position: relative; width: 350px; height: 44px; border-radius: 22px; background: conic-gradient(rgb(204, 204, 204) 25%, rgb(255, 255, 255) 0deg, rgb(255, 255, 255) 50%, rgb(204, 204, 204) 0deg, rgb(204, 204, 204) 75%, rgb(255, 255, 255) 0deg) 0% 0% / 8px 8px; overflow: visible; display: block; margin-top: 12px;"><div class="IroSliderGradient" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; border-radius: 22px; background: linear-gradient(to right, rgb(255, 255, 255) 0%, rgb(4, 255, 0) 100%); box-sizing: border-box; border: 4px solid rgb(255, 255, 255);"></div><svg class="IroHandle IroHandle--0 IroHandle--isActive" style="transform: translate(138.28px, 22px); will-change: transform; top: -12px; left: -12px; width: 24px; height: 24px; position: absolute; overflow: visible;"><circle cx="12" cy="12" r="12" fill="none" stroke-width="2" stroke="#000"></circle><circle cx="12" cy="12" r="10" fill="none" stroke-width="2" stroke="#fff"></circle></svg></div></div></textarea>
+        </aside>
+        <aside class="aside aside-2">
+            <span>Result</span>
+            <div id="result"></div>
+        </aside>
+        <footer class="footer">
+            <div id="textresult" style="width: 100%;height: 300px; border: 1px solid black; overflow: scroll; text-align: left;"></div>
+        </footer>
+    </div>
+    <div id="hiddencontent" style="visibility: hidden;"></div>
+</body>
+
+</html>
+<script>
+    var html2js = "";
+    window.onload = function () {
+        document.getElementById("boton").addEventListener("click", transformar);
+    }
+
+    function transformar() {
+        var html = document.getElementById("textarea").value;
+        document.getElementById("hiddencontent").innerHTML = html;
+
+        let elm = document.getElementById("hiddencontent").childNodes[0];
+        html2js = genAsObject(elm, "document.getElementById(\"result\")");
+
+        document.getElementById("result").innerHTML = "";
+        document.getElementById("textresult").innerText = html2js;
+
+        eval(html2js);
+    }
+
+    var i = 0;
+    function genAsObject(elm, parent) {
+        var name = elm.tagName.toLowerCase() + "Obj" + i;
+        var elmJs = "var " + name + " = document.createElement(\"" + elm.tagName + "\");\n"
+        if (elm.attributes.length > 0) {
+            for (let attr of elm.attributes) {
+                if (attr.nodeName == "id") {
+                    elmJs += name + ".id=\"" + attr.nodeValue + "\";\n";
+                } else if (attr.nodeName == "name") {
+                    elmJs += name + ".name=\"" + attr.nodeValue + "\";\n";
+                } else if (attr.nodeName == "class") {
+                    var classValues = attr.nodeValue.split(" ");
+                    for (classValue of classValues) {
+                        elmJs += name + ".class=\"" + classValue + "\";\n";
+                    }
+                } else if (attr.nodeName == "style") {
+                    var styleValues = attr.nodeValue.split(";");
+                    for (styleValue of styleValues) {
+                        if (styleValue == "") continue;
+                        var styleName = styleValue.split(": ")[0].trim();
+                        const regex = /-(?<letter>\w)/i;
+                        const matches = styleName.match(regex);
+                        styleName = styleName.replace(regex, (matches !== null) ? matches.groups.letter.toUpperCase() : styleName);
+                        var styleVal = styleValue.split(": ")[1].trim();
+                        elmJs += name + ".style." + styleName + "=\"" + styleVal + "\";\n";
+                    }
+                } else {
+                    var attrName = attr.nodeName;
+                    if (attrName.indexOf("-")) {
+                        const regex = /-(?<letter>\w)/i;
+                        const matches = attrName.match(regex);
+                        attrName = attrName.replace(regex, (matches !== null) ? matches.groups.letter.toUpperCase() : attrName);
+                    }
+                    elmJs += name + "." + attrName + "=\"" + attr.nodeValue + "\";\n";
+                }
+            }
+        }
+
+        if (elm.childNodes.length > 0) {
+            for (let child of elm.childNodes) {
+                if (child.nodeType != 1) continue;
+                i++;
+                elmJs += "\n";
+                elmJs += genAsObject(child, name);
+            }
+        }
+
+        elmJs += parent + ".appendChild(" + name + ");\n";
+
+        console.log(elmJs);
+        return elmJs;
+    }
+</script>
