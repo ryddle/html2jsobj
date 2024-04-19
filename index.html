@@ -79,6 +79,7 @@
             padding: 10px;
             height: 600px;
             overflow: scroll;
+            max-width: 1187px;
         }
     </style>
 </head>
@@ -118,8 +119,13 @@
         var html = document.getElementById("textarea").value;
         document.getElementById("hiddencontent").innerHTML = html;
 
-        let elm = document.getElementById("hiddencontent").childNodes[0];
-        html2js = genAsObject(elm, "document.getElementById(\"result\")");
+        var html2js = "";
+        for (let index = 0; index < document.getElementById("hiddencontent").childNodes.length; index++) {
+            const elm = document.getElementById("hiddencontent").childNodes[index];
+            if(elm.nodeType == 1){
+                html2js += genAsObject(elm, "document.getElementById(\"result\")");
+            }
+        }
 
         document.getElementById("result").innerHTML = "";
         document.getElementById("textresult").innerText = html2js;
@@ -130,7 +136,7 @@
     var i = 0;
     function genAsObject(elm, parent) {
         var name = elm.tagName.toLowerCase() + "Obj" + i;
-        var elmJs = "var " + name + " = document.createElement(\"" + elm.tagName + "\");\n"
+        var elmJs = "var " + name + " = document.createElement(\"" + elm.tagName.toLowerCase() + "\");\n"
         if (elm.attributes.length > 0) {
             for (let attr of elm.attributes) {
                 if (attr.nodeName == "id") {
@@ -138,10 +144,7 @@
                 } else if (attr.nodeName == "name") {
                     elmJs += name + ".name=\"" + attr.nodeValue + "\";\n";
                 } else if (attr.nodeName == "class") {
-                    var classValues = attr.nodeValue.split(" ");
-                    for (classValue of classValues) {
-                        elmJs += name + ".class=\"" + classValue + "\";\n";
-                    }
+                    elmJs += name + ".className=\"" + attr.nodeValue + "\";\n";
                 } else if (attr.nodeName == "style") {
                     var styleValues = attr.nodeValue.split(";");
                     for (styleValue of styleValues) {
@@ -167,10 +170,15 @@
 
         if (elm.childNodes.length > 0) {
             for (let child of elm.childNodes) {
-                if (child.nodeType != 1) continue;
-                i++;
-                elmJs += "\n";
-                elmJs += genAsObject(child, name);
+                if (child.nodeType == 1){
+                    i++;
+                    elmJs += "\n";
+                    elmJs += genAsObject(child, name);
+                }else if(child.nodeType == 3){
+                    if(child.wholeText != "\n"){
+                        elmJs += name + ".innerText = " + JSON.stringify(child.wholeText) +";\n";
+                    }
+                }
             }
         }
 
