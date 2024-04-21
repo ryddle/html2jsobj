@@ -10,34 +10,39 @@ class HtmlToJsObj {
         for (let index = 0; index < parentNode.childNodes.length; index++) {
             const elm = parentNode.childNodes[index];
             if (elm.nodeType == 1) {
-                html2js += this.#genAsObject(elm, "document.getElementById(\"" + resultNodeId + "\")");
+                html2js += this.#genAsObject(elm, 'document.getElementById("' + resultNodeId + '")');
             }
         }
         return html2js;
     }
 
     static #genAsObject(elm, parent) {
-        var name = elm.tagName.toLowerCase() + "Obj" + this.#objIndex;
-        var elmJs = "var " + name + " = document.createElement(\"" + elm.tagName.toLowerCase() + "\");\n"
+        var name = elm.tagName.toLowerCase() + 'Obj' + this.#objIndex;
+        var elmJs = 'var ' + name + ' = document.createElement("' + elm.tagName.toLowerCase() + '");\n';
         if (elm.attributes.length > 0) {
             for (let attr of elm.attributes) {
                 if (attr.nodeName == "id") {
-                    elmJs += name + ".id=\"" + attr.nodeValue + "\";\n";
+                    elmJs += name + '.id="' + attr.nodeValue + '";\n';
                 } else if (attr.nodeName == "name") {
-                    elmJs += name + ".name=\"" + attr.nodeValue + "\";\n";
+                    elmJs += name + '.name="' + attr.nodeValue + '";\n';
                 } else if (attr.nodeName == "class") {
-                    elmJs += name + ".className=\"" + attr.nodeValue + "\";\n";
+                    elmJs += name + '.className="'+ attr.nodeValue + '";\n';
                 } else if (attr.nodeName == "style") {
+                    if (attr.nodeValue == "") continue;
+                    elmJs += 'Object.assign(' + name + '.style,  {\n';
                     var styleValues = attr.nodeValue.split(";");
-                    for (let styleValue of styleValues) {
+                    for (let index = 0; index < styleValues.length; index++) {
+                        const styleValue = styleValues[index];
                         if (styleValue == "") continue;
                         var styleName = styleValue.split(": ")[0].trim();
                         const regex = /-(?<letter>\w)/i;
                         const matches = styleName.match(regex);
                         styleName = styleName.replace(regex, (matches !== null) ? matches.groups.letter.toUpperCase() : styleName);
                         var styleVal = styleValue.split(": ")[1].trim();
-                        elmJs += name + ".style." + styleName + "=\"" + styleVal + "\";\n";
+                        //elmJs += name + ".style." + styleName + "=\"" + styleVal + "\";\n";
+                        elmJs += '    ' + styleName + ':"' + styleVal + '"' + (index < styleValues.length - 2 ? ',' : '') + '\r\n';
                     }
+                    elmJs += '});\n';
                 } else {
                     var attrName = attr.nodeName;
                     if (attrName.indexOf("-")) {
@@ -45,7 +50,7 @@ class HtmlToJsObj {
                         const matches = attrName.match(regex);
                         attrName = attrName.replace(regex, (matches !== null) ? matches.groups.letter.toUpperCase() : attrName);
                     }
-                    elmJs += name + "." + attrName + "=\"" + attr.nodeValue + "\";\n";
+                    elmJs += name + '.' + attrName + '="' + attr.nodeValue + '";\n';
                 }
             }
         }
@@ -54,17 +59,17 @@ class HtmlToJsObj {
             for (let child of elm.childNodes) {
                 if (child.nodeType == 1) {
                     this.#objIndex++;
-                    elmJs += "\n";
+                    elmJs += '\n';
                     elmJs += this.#genAsObject(child, name);
                 } else if (child.nodeType == 3) {
                     if (child.wholeText != "\n") {
-                        elmJs += name + ".innerText = " + JSON.stringify(child.wholeText) + ";\n";
+                        elmJs += name + '.innerText = ' + JSON.stringify(child.wholeText) + ';\n';
                     }
                 }
             }
         }
 
-        elmJs += parent + ".appendChild(" + name + ");\n";
+        elmJs += parent + '.appendChild(' + name + ');\n';
 
         console.log(elmJs);
         return elmJs;
