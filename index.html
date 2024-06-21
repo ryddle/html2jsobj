@@ -123,9 +123,12 @@ Sed euismod, nunc at ultrices lobortis, arcu massa auctor tellus, non consequat 
 <script>
     window.onload = function () {
         document.getElementById("boton").addEventListener("click", function () {
-            var html = document.getElementById("textarea").value;
-            document.getElementById("hiddencontent").innerHTML = html;
-            var html2js = HtmlToJsObj.transform(document.getElementById("hiddencontent"), "result");
+            var htmltext = document.getElementById("textarea").value;
+            document.getElementById("hiddencontent").innerHTML = htmltext;
+
+            //var html2js = HtmlToJsObj.transform(document.getElementById("hiddencontent"), "result");
+
+            var html2js = HtmlToJsObj.transform2(htmltext, "result");
 
             document.getElementById("result").innerHTML = "";
             document.getElementById("textresult").innerText = html2js;

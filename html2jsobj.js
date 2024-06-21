@@ -26,31 +26,70 @@ class HtmlToJsObj {
                 } else if (attr.nodeName == "name") {
                     elmJs += name + '.name="' + attr.nodeValue + '";\n';
                 } else if (attr.nodeName == "class") {
-                    elmJs += name + '.className="'+ attr.nodeValue + '";\n';
+                    elmJs += name + '.className="' + attr.nodeValue.replaceAll("\n", "") + '";\n';
                 } else if (attr.nodeName == "style") {
                     if (attr.nodeValue == "") continue;
                     elmJs += 'Object.assign(' + name + '.style,  {\n';
-                    var styleValues = attr.nodeValue.split(";");
+                    /* var styleValues = attr.nodeValue.split(";");
                     for (let index = 0; index < styleValues.length; index++) {
                         const styleValue = styleValues[index];
                         if (styleValue == "") continue;
-                        var styleName = styleValue.split(": ")[0].trim();
+                        var styleName = styleValue.split(":")[0].trim();
                         const regex = /-(?<letter>\w)/i;
-                        const matches = styleName.match(regex);
-                        styleName = styleName.replace(regex, (matches !== null) ? matches.groups.letter.toUpperCase() : styleName);
-                        var styleVal = styleValue.split(": ")[1].trim();
+                        //const matches = styleName.match(regex);
+                        //styleName = styleName.replace(regex, (matches !== null) ? matches.groups.letter.toUpperCase() : styleName);
+                        styleName = styleName.replace(/-([a-z])/g,function(str,letter){ return letter.toUpperCase();});
+                        var styleVal = styleValue.split(":")[1].trim();
                         //elmJs += name + ".style." + styleName + "=\"" + styleVal + "\";\n";
                         elmJs += '    ' + styleName + ':"' + styleVal + '"' + (index < styleValues.length - 2 ? ',' : '') + '\r\n';
+                    } */
+                    if (elm.style.length > 0) {
+                        for (let index = 0; index < elm.style.length; index++) {
+                            let styleName = elm.style[index];
+                            let styleValue = elm.style[styleName];
+                            if (styleValue == "") continue;
+                            //const regex = /-(?<letter>\w)/g;
+                            //const matches = styleName.match(regex);
+                            //styleName = styleName.replace(regex, (matches !== null) ? matches.groups.letter.toUpperCase() : styleName);
+                            styleName = styleName.replace(/-([a-z])/g,function(str,letter){ return letter.toUpperCase();});
+                            if (!/^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(styleName)) {
+                                styleName = '"' + styleName + '"';
+                            }
+                            styleValue = (styleValue!==undefined) ?styleValue.replaceAll("\"", "'"):"";
+                            elmJs += '    ' + styleName + ':"' + styleValue + '"' + (index < elm.style.length - 1 ? ',' : '') + '\r\n';
+                        }
+                    } else {
+                        var styleValues = attr.nodeValue.split(";");
+                        for (let index = 0; index < styleValues.length; index++) {
+                            const styleValue = styleValues[index];
+                            if (styleValue == "") continue;
+                            var styleName = styleValue.split(":")[0].trim();
+                            //const regex = /-(?<letter>\w)/i;
+                            //const matches = styleName.match(regex);
+                            //styleName = styleName.replace(regex, (matches !== null) ? matches.groups.letter.toUpperCase() : styleName);
+                            styleName = styleName.replace(/-([a-z])/g,function(str,letter){ return letter.toUpperCase();});
+                            var styleVal = styleValue.split(":")[1].trim();
+                            //elmJs += name + ".style." + styleName + "=\"" + styleVal + "\";\n";
+                            if (!/^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(styleName)) {
+                                styleName = '"' + styleName + '"';
+                            }
+                            elmJs += '    ' + styleName + ':"' + styleVal + '"' + (index < attr.nodeValue.length - 2 ? ',' : '') + '\r\n';
+                        }
                     }
                     elmJs += '});\n';
                 } else {
                     var attrName = attr.nodeName;
-                    if (attrName.indexOf("-")) {
-                        const regex = /-(?<letter>\w)/i;
-                        const matches = attrName.match(regex);
-                        attrName = attrName.replace(regex, (matches !== null) ? matches.groups.letter.toUpperCase() : attrName);
+                    if (attrName.indexOf("-")!=-1){
+                        //const regex = /-(?<letter>\w)/i;
+                        //const matches = attrName.match(regex);
+                        //attrName = attrName.replace(regex, (matches !== null) ? matches.groups.letter.toUpperCase() : attrName);
+                        attrName = attrName.replace(/-([a-z])/g,function(str,letter){ return letter.toUpperCase();});
                     }
-                    elmJs += name + '.' + attrName + '="' + attr.nodeValue + '";\n';
+                    if(attrName.indexOf(':')!=-1){
+                        elmJs += name + '["' + attrName + '"]="' + attr.nodeValue + '";\n';
+                    }else{
+                        elmJs += name + '.' + attrName + '="' + attr.nodeValue + '";\n';
+                    }
                 }
             }
         }
@@ -73,6 +112,21 @@ class HtmlToJsObj {
 
         console.log(elmJs);
         return elmJs;
+    }
+
+    static transform2(htmltext) {
+        var html2js = "";
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(htmltext, "text/html");
+        var root = doc.body;
+
+        for (let index = 0; index < root.childNodes.length; index++) {
+            const elm = root.childNodes[index];
+            if (elm.nodeType == 1) {
+                html2js += this.#genAsObject(elm, 'document.getElementById("result")');
+            }
+        }
+        return html2js;
     }
 
 }
